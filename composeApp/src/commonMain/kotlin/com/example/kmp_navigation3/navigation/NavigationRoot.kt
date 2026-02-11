@@ -1,6 +1,7 @@
 package com.example.kmp_navigation3.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -12,7 +13,7 @@ import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun NavigationRoot() {
+fun NavigationRoot(modifier: Modifier = Modifier) {
     val navBackStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             //defines how routes should be serialized
@@ -27,14 +28,15 @@ fun NavigationRoot() {
     )
 
     NavDisplay(
+        modifier = modifier,
         backStack = navBackStack,
         entryProvider = { key ->
             when (key) {
                 is Route.ListScreen -> {
                     NavEntry(key) {
                         ListScreen(
-                            onClick = {
-                                // TODO: navigate to detail screen
+                            onClick = { todo ->
+                                navBackStack.add(Route.DetailScreen(todo))
                             }
                         )
                     }
