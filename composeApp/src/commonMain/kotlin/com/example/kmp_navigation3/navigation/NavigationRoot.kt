@@ -3,8 +3,8 @@ package com.example.kmp_navigation3.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
@@ -38,25 +38,16 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             //viewmodels will be scoped properly
             rememberViewModelStoreNavEntryDecorator()
         ),
-        entryProvider = { key ->
-            when (key) {
-                is Route.ListScreen -> {
-                    NavEntry(key) {
-                        ListScreen(
-                            onClick = { todo ->
-                                navBackStack.add(Route.DetailScreen(todo))
-                            }
-                        )
+        entryProvider = entryProvider {
+            entry<Route.ListScreen> {
+                ListScreen(
+                    onClick = { todo ->
+                        navBackStack.add(Route.DetailScreen(todo))
                     }
-                }
-
-                is Route.DetailScreen -> {
-                    NavEntry(key) {
-                        DetailScreen(key.todo)
-                    }
-                }
-
-                else -> error("Unknown NavKey; $key")
+                )
+            }
+            entry<Route.DetailScreen> {
+                DetailScreen(it.todo)
             }
         }
     )
