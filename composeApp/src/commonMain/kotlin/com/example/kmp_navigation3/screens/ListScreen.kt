@@ -17,7 +17,9 @@ import com.example.kmp_navigation3.viewmodels.ListScreenViewModel
 
 @Composable
 fun ListScreen(
-    viewModel: ListScreenViewModel = viewModel(),
+    viewModel: ListScreenViewModel = viewModel {
+        ListScreenViewModel()
+    },
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
