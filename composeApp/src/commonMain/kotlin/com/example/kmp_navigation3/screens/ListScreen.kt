@@ -16,7 +16,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kmp_navigation3.viewmodels.ListScreenViewModel
 
 @Composable
-fun TodoList(
+fun ListScreen(
     viewModel: ListScreenViewModel = viewModel(),
     onClick: (String) -> Unit,
     modifier: Modifier = Modifier
