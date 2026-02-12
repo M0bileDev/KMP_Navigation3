@@ -1,4 +1,4 @@
-package com.example.kmp_navigation3.navigation
+package com.example.kmp_navigation3.todo
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,33 +9,37 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.kmp_navigation3.auth.AuthNavigation
-import com.example.kmp_navigation3.todo.TodoNavigation
+import com.example.kmp_navigation3.navigation.Route
+import com.example.kmp_navigation3.todo.presentation.DetailScreen
+import com.example.kmp_navigation3.todo.presentation.ListScreen
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 
 @Composable
-fun NavigationRoot(modifier: Modifier = Modifier) {
+fun TodoNavigation(
+    modifier: Modifier = Modifier
+) {
 
-    val rootBackStack = rememberNavBackStack(
+    val todoBackStack = rememberNavBackStack(
         configuration = SavedStateConfiguration {
             //defines how routes should be serialized
             serializersModule = SerializersModule {
                 //set up polymorphic serializer, to provide proper serialization mechanism
                 //navigate between features like auth and to/do
                 polymorphic(NavKey::class) {
-                    subclass(Route.Auth::class, Route.Auth.serializer())
-                    subclass(Route.Todo::class, Route.Todo.serializer())
+                    subclass(Route.Todo.ListScreen::class, Route.Todo.ListScreen.serializer())
+                    subclass(Route.Todo.DetailScreen::class, Route.Todo.DetailScreen.serializer())
                 }
             }
         },
-        //place condition for nested navigation (e.g. user is already logged -> to/do, user not logged yet -> auth
-        Route.Auth
+        //first screen
+        Route.Todo.ListScreen
     )
 
+    //scoped to the nearest backstack entry -> root navigation
     NavDisplay(
         modifier = modifier,
-        backStack = rootBackStack,
+        backStack = todoBackStack,
         entryDecorators = listOf(
             //
             rememberSaveableStateHolderNavEntryDecorator(),
@@ -43,18 +47,13 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             rememberViewModelStoreNavEntryDecorator()
         ),
         entryProvider = entryProvider {
-            entry<Route.Auth> {
-                AuthNavigation(
-                    onLogin = {
-                        rootBackStack.apply {
-                            remove(Route.Auth)
-                            add(Route.Todo)
-                        }
-                    }
-                )
+            entry<Route.Todo.ListScreen> {
+                ListScreen(onClick = {
+                    todoBackStack.add(Route.Todo.DetailScreen(it))
+                })
             }
-            entry<Route.Todo> {
-                TodoNavigation()
+            entry<Route.Todo.DetailScreen> {
+                DetailScreen(it.todo)
             }
         }
     )
