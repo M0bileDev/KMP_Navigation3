@@ -32,7 +32,6 @@ class NavigationState(
 ) {
 
     var topLevelRoute by topLevelRoute
-        private set
 
     //backstack currently in use
     val stacksInUse: List<NavKey>
