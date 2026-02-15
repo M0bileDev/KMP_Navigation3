@@ -7,9 +7,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
+import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberDecoratedNavEntries
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.savedstate.compose.serialization.serializers.MutableStateSerializer
 import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.PolymorphicSerializer
@@ -94,4 +100,38 @@ val configuration = SavedStateConfiguration {
             subclass(Route.Settings::class, Route.Settings.serializer())
         }
     }
+}
+
+@Composable
+fun NavigationState.toEntries(
+    entryProvider: (NavKey) -> NavEntry<NavKey>
+):
+//      1. return list of compose states,
+//      2. state could change and compose will be notified
+        SnapshotStateList<NavEntry<NavKey>> {
+    //iterate over back stacks and provide entry decorators
+    val decoratedEntries = backStacks.mapValues { (_, stack) ->
+
+        val decorators = listOf(
+            rememberSaveableStateHolderNavEntryDecorator<NavKey>(),
+            //viewmodels will be scoped properly
+            rememberViewModelStoreNavEntryDecorator()
+        )
+
+        //list of nav entry -> each entry is one destination
+        rememberDecoratedNavEntries(
+            backStack = stack,
+            entryDecorators = decorators,
+            //defines which screen can be visited
+            entryProvider = entryProvider
+        )
+    }
+
+    return stacksInUse
+        //top level destinations -> only start destination or start destination + feature destination
+        .flatMap {
+            //access decorated entry by key
+            decoratedEntries[it] ?: emptyList()
+        }
+        .toMutableStateList()
 }
