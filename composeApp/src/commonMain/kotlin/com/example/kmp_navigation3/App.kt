@@ -12,8 +12,6 @@ import com.example.kmp_navigation3.navigation.NavigationRoot
 @Preview
 fun App() {
     MaterialTheme {
-        Scaffold { innerPadding ->
-            NavigationRoot(modifier = Modifier.padding(innerPadding))
-        }
+        NavigationRoot()
     }
 }
