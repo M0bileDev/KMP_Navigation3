@@ -7,24 +7,14 @@ import kotlinx.serialization.Serializable
 sealed interface Route : NavKey {
 
     @Serializable
-    data object Auth: Route {
-
-        @Serializable
-        data object Login : Route
-
-        @Serializable
-        data object Register : Route
-
-    }
+    data object ListScreen : Route
 
     @Serializable
-    data object Todo: Route {
+    data object TodoFavorites : Route
 
-        @Serializable
-        data object ListScreen : Route
+    @Serializable
+    data class DetailScreen(val todo: String) : Route
 
-        @Serializable
-        data class DetailScreen(val todo: String) : Route
-    }
-
+    @Serializable
+    data object Settings : Route
 }

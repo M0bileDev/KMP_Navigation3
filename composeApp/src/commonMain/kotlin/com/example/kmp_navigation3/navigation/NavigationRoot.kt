@@ -1,61 +1,74 @@
 package com.example.kmp_navigation3.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
-import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
-import androidx.savedstate.serialization.SavedStateConfiguration
-import com.example.kmp_navigation3.auth.AuthNavigation
-import com.example.kmp_navigation3.todo.TodoNavigation
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
+import com.example.kmp_navigation3.navigation.BottomNavItem.Companion.topLevelDestinations
+import com.example.kmp_navigation3.screens.DetailScreen
+import com.example.kmp_navigation3.screens.ListScreen
 
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
-
-    val rootBackStack = rememberNavBackStack(
-        configuration = SavedStateConfiguration {
-            //defines how routes should be serialized
-            serializersModule = SerializersModule {
-                //set up polymorphic serializer, to provide proper serialization mechanism
-                //navigate between features like auth and to/do
-                polymorphic(NavKey::class) {
-                    subclass(Route.Auth::class, Route.Auth.serializer())
-                    subclass(Route.Todo::class, Route.Todo.serializer())
-                }
-            }
-        },
-        //place condition for nested navigation (e.g. user is already logged -> to/do, user not logged yet -> auth
-        Route.Auth
+    val navigationState = rememberNavigationState(
+        startRoute = Route.ListScreen,
+        topLevelRoutes = topLevelDestinations.keys
     )
+    val navigator = remember {
+        Navigator(navigationState)
+    }
 
-    NavDisplay(
+    Scaffold(
         modifier = modifier,
-        backStack = rootBackStack,
-        entryDecorators = listOf(
-            //
-            rememberSaveableStateHolderNavEntryDecorator(),
-            //viewmodels will be scoped properly
-            rememberViewModelStoreNavEntryDecorator()
-        ),
-        entryProvider = entryProvider {
-            entry<Route.Auth> {
-                AuthNavigation(
-                    onLogin = {
-                        rootBackStack.apply {
-                            remove(Route.Auth)
-                            add(Route.Todo)
+        bottomBar = {
+            TodoNavigationBar(
+                selectKey = navigationState.topLevelRoute,
+                onKeyChange = navigator::navigate
+            )
+        }
+    ) { innerPadding ->
+
+        NavDisplay(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            onBack = navigator::goBack,
+            entries = navigationState.toEntries(
+                entryProvider = entryProvider {
+                    entry<Route.ListScreen> {
+                        ListScreen(
+                            onClick = { todo ->
+                                navigator.navigate(Route.DetailScreen(todo))
+                            }
+                        )
+                    }
+                    entry<Route.DetailScreen> {
+                        DetailScreen(it.todo)
+                    }
+                    entry<Route.TodoFavorites> {
+                        ListScreen(
+                            onClick = { todo ->
+                                navigator.navigate(Route.DetailScreen(todo))
+                            }
+                        )
+                    }
+                    entry<Route.Settings> {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text("Settings")
                         }
                     }
-                )
-            }
-            entry<Route.Todo> {
-                TodoNavigation()
-            }
-        }
-    )
+                }
+            )
+        )
+    }
 }
