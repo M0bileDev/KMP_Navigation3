@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
@@ -20,14 +21,16 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
         startRoute = Route.ListScreen,
         topLevelRoutes = topLevelDestinations.keys
     )
+    val navigator = remember {
+        Navigator(navigationState)
+    }
 
     Scaffold(
+        modifier = modifier,
         bottomBar = {
             TodoNavigationBar(
-                selectKey = Route.ListScreen,
-                onKeyChange = {
-                    // TODO: provide implementation
-                }
+                selectKey = navigationState.topLevelRoute,
+                onKeyChange = navigator::navigate
             )
         }
     ) { innerPadding ->
@@ -36,13 +39,13 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            onBack = {},
+            onBack = navigator::goBack,
             entries = navigationState.toEntries(
                 entryProvider = entryProvider {
                     entry<Route.ListScreen> {
                         ListScreen(
                             onClick = { todo ->
-                                navBackStack.add(Route.DetailScreen(todo))
+                                navigator.navigate(Route.DetailScreen(todo))
                             }
                         )
                     }
@@ -52,7 +55,7 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                     entry<Route.TodoFavorites> {
                         ListScreen(
                             onClick = { todo ->
-                                navBackStack.add(Route.DetailScreen(todo))
+                                navigator.navigate(Route.DetailScreen(todo))
                             }
                         )
                     }
