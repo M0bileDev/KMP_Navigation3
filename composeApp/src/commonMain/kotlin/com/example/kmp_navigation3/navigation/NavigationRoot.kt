@@ -12,8 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.kmp_navigation3.navigation.BottomNavItem.Companion.topLevelDestinations
-import com.example.kmp_navigation3.screens.DetailScreen
-import com.example.kmp_navigation3.screens.ListScreen
+import com.example.kmp_navigation3.todo.presentation.DetailScreen
+import com.example.kmp_navigation3.todo.presentation.ListScreen
 
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
