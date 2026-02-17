@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.example.kmp_navigation3.navigation.BottomNavItem.Companion.topLevelDestinations
+import com.example.kmp_navigation3.navigation.scenes.ListDetailScene
+import com.example.kmp_navigation3.navigation.scenes.rememberListDetailSceneStrategy
 import com.example.kmp_navigation3.todo.presentation.DetailScreen
 import com.example.kmp_navigation3.todo.presentation.ListScreen
 
@@ -40,19 +42,26 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .padding(innerPadding),
             onBack = navigator::goBack,
+            sceneStrategy = rememberListDetailSceneStrategy(),
             entries = navigationState.toEntries(
                 entryProvider = entryProvider {
-                    entry<Route.ListScreen> {
+                    entry<Route.ListScreen>(
+                        metadata = ListDetailScene.listPane()
+                    ) {
                         ListScreen(
                             onClick = { todo ->
                                 navigator.navigate(Route.DetailScreen(todo))
                             }
                         )
                     }
-                    entry<Route.DetailScreen> {
+                    entry<Route.DetailScreen>(
+                        metadata = ListDetailScene.detailPane()
+                    ) {
                         DetailScreen(it.todo)
                     }
-                    entry<Route.TodoFavorites> {
+                    entry<Route.TodoFavorites>(
+                        metadata = ListDetailScene.listPane()
+                    ) {
                         ListScreen(
                             onClick = { todo ->
                                 navigator.navigate(Route.DetailScreen(todo))
