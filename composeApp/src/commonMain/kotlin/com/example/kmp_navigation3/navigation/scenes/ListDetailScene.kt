@@ -37,4 +37,13 @@ class ListDetailScene<T : Any>(
             }
         }
     }
+
+    companion object{
+        const val LIST_KEY = "ListDetailScene-List"
+        const val DETAIL_KEY = "ListDetailScene-Detail"
+
+        //helper functions reference to some kind of entry
+        fun listPane() = mapOf(LIST_KEY to true) //that nav entry is considered as list screen
+        fun detailPane() = mapOf(DETAIL_KEY to true)
+    }
 }
