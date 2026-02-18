@@ -30,6 +30,7 @@ class ResultStore {
                 }
             }
         )
+        val TEXT_FIELD_SETTING_KEY = "TEXT_FIELD_SETTING_KEY"
 
     }
 }
