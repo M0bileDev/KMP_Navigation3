@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -14,8 +13,10 @@ import androidx.navigation3.ui.NavDisplay
 import com.example.kmp_navigation3.navigation.BottomNavItem.Companion.topLevelDestinations
 import com.example.kmp_navigation3.navigation.scenes.ListDetailScene
 import com.example.kmp_navigation3.navigation.scenes.rememberListDetailSceneStrategy
+import com.example.kmp_navigation3.todo.presentation.ChangeSettingsScreen
 import com.example.kmp_navigation3.todo.presentation.DetailScreen
 import com.example.kmp_navigation3.todo.presentation.ListScreen
+import com.example.kmp_navigation3.todo.presentation.SettingsScreen
 
 @Composable
 fun NavigationRoot(modifier: Modifier = Modifier) {
@@ -26,6 +27,8 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
     val navigator = remember {
         Navigator(navigationState)
     }
+
+    val resultStore = rememberResultStore()
 
     Scaffold(
         modifier = modifier,
@@ -69,11 +72,18 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         )
                     }
                     entry<Route.Settings> {
+                        SettingsScreen(resultStore, onChangeSettingsClick = {
+                            navigator.navigate(Route.ChangeSettings)
+                        })
+                    }
+                    entry<Route.ChangeSettings> {
                         Box(
                             modifier = Modifier.fillMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
-                            Text("Settings")
+                            ChangeSettingsScreen(resultStore, onSave = {
+                                navigator.goBack()
+                            })
                         }
                     }
                 }
