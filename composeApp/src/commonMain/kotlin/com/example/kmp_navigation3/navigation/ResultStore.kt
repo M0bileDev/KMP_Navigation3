@@ -1,6 +1,8 @@
 package com.example.kmp_navigation3.navigation
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.rememberSaveable
 
 class ResultStore {
     private val results = mutableMapOf<Any, Any?>()
@@ -30,4 +32,11 @@ class ResultStore {
         )
 
     }
+}
+
+@Composable
+fun rememberResultStore() = rememberSaveable(
+    saver = ResultStore.Saver,
+) {
+    ResultStore()
 }
