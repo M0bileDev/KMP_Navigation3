@@ -1,5 +1,10 @@
 package com.example.kmp_navigation3.navigation
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -45,6 +50,9 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .padding(innerPadding),
             onBack = navigator::goBack,
+            transitionSpec = {
+                slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+            },
             sceneStrategy = rememberListDetailSceneStrategy(),
             entries = navigationState.toEntries(
                 entryProvider = entryProvider {
