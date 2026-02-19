@@ -1,5 +1,6 @@
 package com.example.kmp_navigation3.navigation
 
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -51,7 +52,15 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                 .padding(innerPadding),
             onBack = navigator::goBack,
             transitionSpec = {
-                slideInHorizontally { it } + fadeIn() togetherWith slideOutHorizontally { -it } + fadeOut()
+                slideInHorizontally(
+                    animationSpec = tween(1000)
+                ) { it } + fadeIn(
+                    animationSpec = tween(2000)
+                ) togetherWith slideOutHorizontally(
+                    animationSpec = tween(1000)
+                ) { -it } + fadeOut(
+                    animationSpec = tween(2000)
+                )
             },
             popTransitionSpec = {
                 slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
