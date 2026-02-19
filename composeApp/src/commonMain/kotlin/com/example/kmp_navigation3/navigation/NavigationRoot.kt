@@ -56,6 +56,9 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
             popTransitionSpec = {
                 slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
             },
+            predictivePopTransitionSpec = {
+                slideInHorizontally { -it } + fadeIn() togetherWith slideOutHorizontally { it } + fadeOut()
+            },
             sceneStrategy = rememberListDetailSceneStrategy(),
             entries = navigationState.toEntries(
                 entryProvider = entryProvider {
