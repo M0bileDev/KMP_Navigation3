@@ -18,8 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.example.kmp_navigation3.navigation.ResultStore
 import com.example.kmp_navigation3.navigation.ResultStore.Companion.TEXT_FIELD_SETTING_KEY
 
-private const val TEXT_FIELD_SETTING = "TEXT_FIELD_SETTING"
-
 @Composable
 fun ChangeSettingsScreen(
     resultStore: ResultStore,
